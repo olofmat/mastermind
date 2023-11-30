@@ -2,8 +2,11 @@
 """ CodeMaker class """
 from constants import *
 import random
+import numpy as np
 
+PEG_COLORS = np.arange(0, 6)
 
+print(PEG_COLORS)
 class CodeMaker:
 
     def __init__(self):
@@ -16,7 +19,6 @@ class CodeMaker:
         code = []
         for peg in range(0, CODE_LENGTH):
             code.append(random.choice(PEG_COLORS))
-        print(code)
         return code
 
 
@@ -46,26 +48,29 @@ class CodeMaker:
 
     def provideFeedback(self, codeToCopy, guessToCopy):
         """ provides feedback to code breaker """
-        feedback = []
-        code = list(codeToCopy)
-        guess = list(guessToCopy)
-        for i in range(0, CODE_LENGTH):
-            if guess[i] == code[i]:
-                code[i] = '-'
-                guess[i] = ''
-                feedback.append(RED)
-        for i in range(0, CODE_LENGTH):
-            if guess[i] in code:
-               firstMatchedPos = self._findFirstMatchedColor(code, guess[i])
-               code[firstMatchedPos] = '-'
-               guess[i] = ''
-               feedback.append(WHITE)
+        feedback = np.full(CODE_LENGTH, '-')  # Initialize feedback array
+        code = np.array(codeToCopy)
+        guess = np.array(guessToCopy)
+
+        # Check for exact matches (RED)
+        red_indices = np.where(guess == code)[0]
+        feedback[red_indices] = RED
+        code[red_indices] = -1  # mark matched
+        guess[red_indices] = -1
+
+        # Check for color matches (WHITE)
+        for i in range(CODE_LENGTH):
+            if guess[i] != -1 and guess[i] in code:
+                feedback[i] = WHITE
+                code[np.where(code == guess[i])[0][0]] = -1
+
         winnerStatus = self._checkWinnerStatus(feedback)
         if winnerStatus == PLAYER_WON:
             print(WINNER_MSG)
             quit()
         else:
-            return feedback
+            return feedback.tolist()
+
 
 
     def _findFirstMatchedColor(self, codeToCopy, guessItem):
@@ -78,10 +83,11 @@ class CodeMaker:
 
     def _checkWinnerStatus(self, feedback):
         """ returns the winning code if player won """
-        if feedback == WINNER_FEEDBACK:
+        if np.all(feedback == RED):
             return PLAYER_WON
         else:
             print("Feedback: {}".format(feedback))
+
 
 
     def _printUserFriendlyErrorMessage(self, errCode):

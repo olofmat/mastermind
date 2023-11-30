@@ -1,3 +1,5 @@
+import numpy as np
+
 # colors of code pegs
 BLUE = 'blue'
 PURPLE = 'purple'
@@ -11,7 +13,7 @@ RED = 'red'
 WHITE = 'white'
 
 # list of peg colors random will choose from
-PEG_COLORS = [BLUE, PURPLE, YELLOW, ORANGE, GREEN, BLACK]
+PEG_COLORS = np.arange(0, 6)
 
 # list of feedback needed to win the game
 WINNER_FEEDBACK = [RED, RED, RED, RED]
