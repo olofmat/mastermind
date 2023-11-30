@@ -6,7 +6,7 @@ import numpy as np
 
 PEG_COLORS = np.arange(0, 6)
 
-print(PEG_COLORS)
+
 class CodeMaker:
 
     def __init__(self):
