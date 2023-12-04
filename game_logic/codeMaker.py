@@ -16,13 +16,13 @@ class CodeMaker:
 
     def createRandomCode(self):
         """ creates a code using random """
-        code = []
-        for peg in range(0, CODE_LENGTH):
-            code.append(random.choice(PEG_COLORS))
+        np.random.seed(2)
+        code = np.array(np.random.choice(PEG_COLORS, CODE_LENGTH))
+        print(code)
         return code
 
 
-    def createCode(self):
+    def createCode(self): 
         """ returns a validated code """
         code = input(CODE_PROMPT).split()
         inputValidationResult = self._validateUserInput(code)
@@ -31,6 +31,7 @@ class CodeMaker:
             code = input(CODE_PROMPT).split()
             inputValidationResult = self._validateUserInput(code)
             self._printUserFriendlyErrorMessage(inputValidationResult)
+        
         return code
 
 
@@ -48,28 +49,26 @@ class CodeMaker:
 
     def provideFeedback(self, codeToCopy, guessToCopy):
         """ provides feedback to code breaker """
-        feedback = np.full(CODE_LENGTH, '-')  # Initialize feedback array
+        
+        Feedback = np.array([0,0])
         code = np.array(codeToCopy)
         guess = np.array(guessToCopy)
 
-        # Check for exact matches (RED)
-        red_indices = np.where(guess == code)[0]
-        feedback[red_indices] = RED
+        red_indices = np.where(guess == code)        
+        Feedback[0] = len(red_indices[0])
         code[red_indices] = -1  # mark matched
-        guess[red_indices] = -1
+        guess[red_indices] = -1  # mark matched
 
         # Check for color matches (WHITE)
+        white_points = 0
         for i in range(CODE_LENGTH):
             if guess[i] != -1 and guess[i] in code:
-                feedback[i] = WHITE
+                white_points += 1
                 code[np.where(code == guess[i])[0][0]] = -1
-
-        winnerStatus = self._checkWinnerStatus(feedback)
-        if winnerStatus == PLAYER_WON:
-            print(WINNER_MSG)
-            quit()
-        else:
-            return feedback.tolist()
+        
+        Feedback[1] = white_points
+        
+        return Feedback
 
 
 
@@ -83,10 +82,10 @@ class CodeMaker:
 
     def _checkWinnerStatus(self, feedback):
         """ returns the winning code if player won """
-        if np.all(feedback == RED):
-            return PLAYER_WON
+        if feedback[0] == 4:
+            return True
         else:
-            print("Feedback: {}".format(feedback))
+            return False
 
 
 

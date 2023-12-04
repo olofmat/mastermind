@@ -1,6 +1,6 @@
 #!usr/bin/python3
 """ CodeBreaker class """
-from constants import *
+from constants import GUESS_LENGTH, MAX_NUMBER_OF_GUESSES, PEG_COLORS, GUESS_PROMPT, USER_INPUT_ERROR_MSG, MISSING_INPUT_ERROR_CODE, UNKNOWN_COLOR_ERROR_CODE
 import numpy as np
 
 color_to_number = {
@@ -18,21 +18,25 @@ class CodeBreaker:
         """ initializes an instance """
         pass
 
+    def makeGuess_notest(self, guessCount):
+
+        return np.array(input(GUESS_PROMPT).split(), dtype=int)
 
     def makeGuess(self, guessCount):
         """ returns a validated guess """
         guessesLeft = MAX_NUMBER_OF_GUESSES - guessCount
         print('\nNumber of guesses left: {}'.format(guessesLeft))
 
-        guess_str = input(GUESS_PROMPT).split()
-
-        guess = np.array([color_to_number[color] for color in guess_str if color in color_to_number])
-
+        guess = np.array(input(GUESS_PROMPT).split(), dtype=int)
+        
         inputValidationResult = self._validateUserInput(guess)
+        print(inputValidationResult)
         self._printUserFriendlyErrorMessage(inputValidationResult)
+
         while inputValidationResult is not None:
             guess_str = input(GUESS_PROMPT).split()
-            guess = np.array([color_to_number[color] for color in guess_str if color in color_to_number])
+            guess = np.array([color_to_number[color]
+                              for color in guess_str if color in color_to_number])
             inputValidationResult = self._validateUserInput(guess)
             self._printUserFriendlyErrorMessage(inputValidationResult)
         return guess

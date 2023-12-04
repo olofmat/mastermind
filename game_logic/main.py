@@ -3,6 +3,7 @@
 from codeBreaker import CodeBreaker
 from codeMaker import CodeMaker
 from constants import *
+from tests import test_provide_feedback
 from os import system, name
 import random
 
@@ -13,7 +14,6 @@ def clear():
         _ = system('cls')
     else:
         _ = system('clear')
-
 
 def isGameAgainstBot(botOrNot):
     """ checks if user wants to play with bot """
@@ -26,29 +26,29 @@ def isGameAgainstBot(botOrNot):
         quit()
 
 def main():
-    """ point of execution """
-    print(WELCOME_MESSAGE, '\n')
-    botOrNot = input(BOT_OR_TWO_PLAYER_PROMPT)
-    gameIsAgainstBot = isGameAgainstBot(botOrNot)
+    gameIsAgainstBot = True
     codeMaker = CodeMaker()
     codeBreaker = CodeBreaker()
+
+    test_provide_feedback(codeMaker.provideFeedback)
+    
     if gameIsAgainstBot:
         code = codeMaker.createRandomCode()
     else:
         code = codeMaker.createCode()
         clear()
-
-    print()
-    print(GUESS_FORMATTING_INSTRUCTIONS)
+        0 
     guessCount = 0
     while guessCount <= MAX_NUMBER_OF_GUESSES:
         if guessCount == MAX_NUMBER_OF_GUESSES:
             print(GUESSES_MAXED_OUT_MESSAGE)
             quit()
         else:
-            guess = codeBreaker.makeGuess(guessCount)
-            codeMaker.provideFeedback(code, guess)
+            # guess = codeBreaker.makeGuess_notest(guessCount)
+            guess = np.array([0, 5, 1, 0])
+            print(codeMaker.provideFeedback(code, guess))
             guessCount += 1
+            quit()
 
 
 if __name__ == '__main__':
